@@ -1,10 +1,9 @@
 package br.uff.id.teste;
 
+import br.uff.id.jpa.EntityManagerUtil;
 import br.uff.id.modelo.Autor;
 import java.util.Set;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,8 +20,8 @@ public class TesteValidarAutor {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoDACPU");
-        EntityManager em = emf.createEntityManager();
+        
+        EntityManager em = EntityManagerUtil.getEntityManager();
         Autor autor = new Autor();
         autor.setNome("");
         autor.setEmail("di.coelhorjgmail.com");
@@ -42,7 +41,6 @@ public class TesteValidarAutor {
         
         em.getTransaction().commit();
         em.close();
-        emf.close();
     }
     
 }

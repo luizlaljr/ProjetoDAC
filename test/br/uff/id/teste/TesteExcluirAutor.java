@@ -1,9 +1,8 @@
 package br.uff.id.teste;
 
+import br.uff.id.jpa.EntityManagerUtil;
 import br.uff.id.modelo.Autor;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 /**
  *
@@ -17,14 +16,13 @@ public class TesteExcluirAutor {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoDACPU");
-        EntityManager em = emf.createEntityManager();
+        
+        EntityManager em = EntityManagerUtil.getEntityManager();
         Autor autor = em.find(Autor.class, 2l);
         em.getTransaction().begin();
         em.remove(autor);
         em.getTransaction().commit();
         em.close();
-        emf.close();
     }
 
 }
