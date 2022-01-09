@@ -8,6 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -26,17 +31,36 @@ public class Autor implements Serializable{
             allocationSize = 1)
     @GeneratedValue(generator = "seq_autor", strategy = GenerationType.SEQUENCE)
     private long id;
+    
+    @Email(message = "O email deve ser valido")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    
+    @Length(max = 64, message = "O nome não pode ter mais de {max} caracteres")
+    @NotNull(message = "O nome não pode ser nulo")
+    @NotBlank(message = "O nome deve ser informado")
     @Column(name = "nome", nullable = false, length = 64)
     private String nome;
+    
+    @Length(max = 64, message = "O sobrenome não pode ter mais de {max} caracteres")
+    @NotNull(message = "O sobrenome não pode ser nulo")
+    @NotBlank(message = "O sobrenome deve ser informado")
     @Column(name = "sobrenome", nullable = false, length = 64)
     private String sobrenome;
+    
+    @Length(max = 256, message = "O afiliacao não pode ter mais de {max} caracteres")
+    @NotNull(message = "O afiliacao não pode ser nulo")
+    @NotBlank(message = "O afiliacao deve ser informado")
     @Column(name = "afiliacao", nullable = false, length = 256)
     private String afiliacao;
+    
+//    @Length(max = 19, message = "O orcid não pode ter mais de {max} caracteres")
+//    @NotNull(message = "O orcid não pode ser nulo")
+//    @NotBlank(message = "O orcid deve ser informado")
+    @Pattern(message = "O ORCID deve seguir o seguinte padrão 0000-0002-0123-208X",regexp = "(\\d{4}\\-\\d{4}\\-\\d{4}\\-\\d{3}(?:\\d|X))$")
     @Column(name = "orcid", nullable = false, length = 19)
     private String orcid;
-    
+        
     public Autor() {
         
     }
