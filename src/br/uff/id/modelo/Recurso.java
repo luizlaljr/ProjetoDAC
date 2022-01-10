@@ -74,16 +74,17 @@ public class Recurso implements Serializable{
     @Column(name = "registro", nullable = false)
     private Calendar registro;
     
-    @NotNull(message = "A lista de palavras não pode ser nula")
-    @Column(name = "palavras", nullable = false)
-    private List<String> palavras = new ArrayList<>();
+    @NotNull(message = "Palavras não podem ser nulas")
+    @NotBlank(message = "As palavras devem ser informadas")
+    @Column(name = "palavras", nullable = false, length = 4096)
+    private String palavras;
     
     @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("nome ASC")
     private List<Autor> autor = new ArrayList<>();
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "colecao_id", referencedColumnName = "id", nullable = true, foreignKey = @ForeignKey(name = "fk_colecao_id"))
+    @JoinColumn(name = "colecao", referencedColumnName = "id", nullable = true, foreignKey = @ForeignKey(name = "fk_colecao_id"))
     private Colecao colecao;
     
     public Recurso() {
@@ -189,14 +190,14 @@ public class Recurso implements Serializable{
     /**
      * @return the palavras
      */
-    public List<String> getPalavras() {
+    public String getPalavras() {
         return palavras;
     }
 
     /**
      * @param palavras the palavras to set
      */
-    public void setPalavras(List<String> palavras) {
+    public void setPalavras(String palavras) {
         this.palavras = palavras;
     }
     
