@@ -56,7 +56,7 @@ public class Colecao implements Serializable {
     @Column(name = "imagem", nullable = false)
     private byte[] imagem;
     
-    @OneToMany(mappedBy = "recurso", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "colecao", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("titulo ASC")
     private List<Recurso> recurso = new ArrayList<>();
     

@@ -79,7 +79,7 @@ public class Recurso implements Serializable{
     @Column(name = "palavras", nullable = false, length = 4096)
     private String palavras;
     
-    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recurso", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("nome ASC")
     private List<Autor> autor = new ArrayList<>();
     
