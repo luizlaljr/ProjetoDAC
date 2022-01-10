@@ -1,13 +1,21 @@
 package br.uff.id.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
@@ -54,17 +62,22 @@ public class Autor implements Serializable{
     @Column(name = "afiliacao", nullable = false, length = 256)
     private String afiliacao;
     
-//    @Length(max = 19, message = "O orcid não pode ter mais de {max} caracteres")
-//    @NotNull(message = "O orcid não pode ser nulo")
-//    @NotBlank(message = "O orcid deve ser informado")
     @Pattern(message = "O ORCID deve seguir o seguinte padrão 0000-0002-0123-208X",regexp = "(\\d{4}\\-\\d{4}\\-\\d{4}\\-\\d{3}(?:\\d|X))$")
     @Column(name = "orcid", nullable = false, length = 19)
     private String orcid;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "recurso_autor",
+            joinColumns = @JoinColumn(name = "recurso", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_recurso_id")),
+            inverseJoinColumns = @JoinColumn(name = "autor", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_autor_id")),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"autor","resurso"})})
+    private List<Recurso> recursos = new ArrayList<>();
         
     public Autor() {
         
     }
-    
+
     /**
      * @return the id
      */
@@ -149,9 +162,23 @@ public class Autor implements Serializable{
         this.orcid = orcid;
     }
     
+    /**
+     * @return the recursos
+     */
+    public List<Recurso> getRecursos() {
+        return recursos;
+    }
+
+    /**
+     * @param recursos the recursos to set
+     */
+    public void setRecursos(List<Recurso> recursos) {
+        this.recursos = recursos;
+    }    
+
     @Override
     public String toString() {
-        return "Autor{" + "email=" + email + ", nome=" + nome + ", sobrenome=" + sobrenome + ", afiliacao=" + afiliacao + ", orcid=" + orcid + '}';
+        return "Autor{" + "id=" + id + ", email=" + email + ", nome=" + nome + ", sobrenome=" + sobrenome + ", afiliacao=" + afiliacao + ", orcid=" + orcid + ", recursos=" + recursos + '}';
     }
     
     @Override
