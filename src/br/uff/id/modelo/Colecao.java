@@ -3,14 +3,20 @@ package br.uff.id.modelo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -21,6 +27,9 @@ import org.hibernate.validator.constraints.NotBlank;
  * @email luiz_alberto@id.uff.br
  * Trabalho da disciplina Desenvolvimento de Aplicações Corporativas 2021/2
  */
+@Entity
+@Table(name = "colecao")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Colecao implements Serializable {
     @Id
     @SequenceGenerator(
@@ -47,7 +56,8 @@ public class Colecao implements Serializable {
     @Column(name = "imagem", nullable = false)
     private byte[] imagem;
     
-    @OneToMany(mappedBy = "recurso", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recurso", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("titulo ASC")
     private List<Recurso> recurso = new ArrayList<>();
     
     public Colecao() {
@@ -115,6 +125,11 @@ public class Colecao implements Serializable {
 
     public void setRecurso(List<Recurso> recurso) {
         this.recurso = recurso;
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + id + ", titulo=" + titulo + ", descricao=" + descricao + ", imagem=" + imagem + ", recurso=" + recurso;
     }
     
     @Override

@@ -1,8 +1,6 @@
 package br.uff.id.modelo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,11 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
@@ -66,13 +62,9 @@ public class Autor implements Serializable{
     @Column(name = "orcid", nullable = false, length = 19)
     private String orcid;
     
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "recurso_autor",
-            joinColumns = @JoinColumn(name = "recurso", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_recurso_id")),
-            inverseJoinColumns = @JoinColumn(name = "autor", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_autor_id")),
-            uniqueConstraints = {@UniqueConstraint(columnNames = {"autor","resurso"})})
-    private List<Recurso> recursos = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recurso", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_recurso_id"))
+    private Recurso recurso;
         
     public Autor() {
         
@@ -163,22 +155,22 @@ public class Autor implements Serializable{
     }
     
     /**
-     * @return the recursos
+     * @return the recurso
      */
-    public List<Recurso> getRecursos() {
-        return recursos;
+    public Recurso getRecurso() {
+        return recurso;
     }
 
     /**
-     * @param recursos the recursos to set
+     * @param recurso the recurso to set
      */
-    public void setRecursos(List<Recurso> recursos) {
-        this.recursos = recursos;
+    public void setRecurso(Recurso recursos) {
+        this.recurso = recurso;
     }    
 
     @Override
     public String toString() {
-        return "Autor{" + "id=" + id + ", email=" + email + ", nome=" + nome + ", sobrenome=" + sobrenome + ", afiliacao=" + afiliacao + ", orcid=" + orcid + ", recursos=" + recursos + '}';
+        return "Autor{" + "id=" + id + ", email=" + email + ", nome=" + nome + ", sobrenome=" + sobrenome + ", afiliacao=" + afiliacao + ", orcid=" + orcid + ", recurso=" + recurso + '}';
     }
     
     @Override

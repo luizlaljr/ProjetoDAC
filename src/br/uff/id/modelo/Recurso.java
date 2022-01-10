@@ -1,8 +1,10 @@
 package br.uff.id.modelo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,14 +13,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -32,7 +33,7 @@ import org.hibernate.validator.constraints.URL;
  */
 @Entity
 @Table(name = "recurso")
-public class Recurso {
+public class Recurso implements Serializable{
     
     @Id
     @SequenceGenerator(
@@ -77,12 +78,8 @@ public class Recurso {
     @Column(name = "palavras", nullable = false)
     private List<String> palavras = new ArrayList<>();
     
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "recurso_autor",
-            joinColumns = @JoinColumn(name = "autor", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_autor_id")),
-            inverseJoinColumns = @JoinColumn(name = "recurso", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_recurso_id")),
-            uniqueConstraints = {@UniqueConstraint(columnNames = {"autor","resurso"})})
+    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("nome ASC")
     private List<Autor> autor = new ArrayList<>();
     
     @ManyToOne(fetch = FetchType.LAZY)
