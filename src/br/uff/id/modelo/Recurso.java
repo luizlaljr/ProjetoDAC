@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -61,8 +62,9 @@ public class Recurso implements Serializable{
     @Column(name = "link", nullable = false)
     private String link;
     
-    @Column(name = "imagem", nullable = false, columnDefinition = "bytea")
-    private String imagem;
+    @Lob
+    @Column(name = "imagem", nullable = false)
+    private byte[] imagem;
     
     @NotNull(message = "A data de criação não pode ser nula")
     @Temporal(TemporalType.DATE)
@@ -145,20 +147,21 @@ public class Recurso implements Serializable{
     public void setLink(String link) {
         this.link = link;
     }
-
+    
     /**
      * @return the imagem
      */
-    public String getImagem() {
+    public byte[] getImagem() {
         return imagem;
     }
 
     /**
      * @param imagem the imagem to set
      */
-    public void setImagem(String imagem) {
+    public void setImagem(byte[] imagem) {
         this.imagem = imagem;
     }
+
     /**
      * @return the criacao
      */
