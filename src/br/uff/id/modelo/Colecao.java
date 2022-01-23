@@ -1,9 +1,7 @@
 package br.uff.id.modelo;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
+import java.io.Serializable;;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,14 +10,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ForeignKey;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.CascadeType;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+
+
 
 /**
  *
@@ -52,13 +56,15 @@ public class Colecao implements Serializable {
     private String descricao;
     
     @Lob
-    @NotNull(message = "A imagem não pode ser nula")
-    @Column(name = "imagem", nullable = false)
+    @Column(name = "imagem", nullable = true)
     private byte[] imagem;
     
-    @OneToMany(mappedBy = "colecao", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinTable(name="colecao_recursos",
+             joinColumns = @JoinColumn(name = "colecao_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_colecao_id")),
+             inverseJoinColumns= @JoinColumn(name = "recursos_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_recursos_id")))
     @OrderBy("titulo ASC")
-    private List<Recurso> recurso = new ArrayList<>();
+    private Set<Recurso> recursos;
     
     public Colecao() {
     }
@@ -118,18 +124,24 @@ public class Colecao implements Serializable {
     public void setImagem(byte[] imagem) {
         this.imagem = imagem;
     }
-
-    public List<Recurso> getRecurso() {
-        return recurso;
+    
+    /**
+     * @return the recursos
+     */
+    public Set<Recurso> getRecurso() {
+        return recursos;
     }
-
-    public void setRecurso(List<Recurso> recurso) {
-        this.recurso = recurso;
+    
+    /**
+     * @param recursos the recursos to set
+     */
+    public void setRecurso(Set<Recurso> recursos) {
+        this.recursos = recursos;
     }
 
     @Override
     public String toString() {
-        return "id=" + id + ", titulo=" + titulo + ", descricao=" + descricao + ", imagem=" + imagem + ", recurso=" + recurso;
+        return "id=" + id + ", titulo=" + titulo + ", descricao=" + descricao + ", imagem=" + imagem + ", recursos=" + recursos;
     }
     
     @Override

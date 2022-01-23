@@ -1,9 +1,8 @@
 package br.uff.id.modelo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,9 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -42,7 +42,7 @@ public class Recurso implements Serializable{
             sequenceName = "seq_recurso_id", 
             allocationSize = 1)
     @GeneratedValue(generator = "seq_recurso", strategy = GenerationType.SEQUENCE)
-    private long id;
+    private Long id;
     
     @Length(max = 1024, message = "O titulo não pode ter mais de {max} caracteres")
     @NotNull(message = "O titulo não pode ser nulo")
@@ -63,7 +63,7 @@ public class Recurso implements Serializable{
     private String link;
     
     @Lob
-    @Column(name = "imagem", nullable = false)
+    @Column(name = "imagem", nullable = true)
     private byte[] imagem;
     
     @NotNull(message = "A data de criação não pode ser nula")
@@ -81,12 +81,17 @@ public class Recurso implements Serializable{
     @Column(name = "palavras", nullable = false, length = 4096)
     private String palavras;
     
-    @OneToMany(mappedBy = "recurso", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @OrderBy("nome ASC")
-    private List<Autor> autor = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable( name="autor_recurso",
+      joinColumns = @JoinColumn(name = "autor_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_autor_id")), 
+      inverseJoinColumns = @JoinColumn(name = "recurso_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_recurso_id")))
+    private Set<Autor> autores;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "colecao", referencedColumnName = "id", nullable = true, foreignKey = @ForeignKey(name = "fk_colecao_id"))
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinTable(name="colecao_recursos",
+             joinColumns = @JoinColumn(name = "recursos_id", insertable = false, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_recursos_id")),
+             inverseJoinColumns= @JoinColumn(name = "colecao_id", insertable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_colecao_id")))
+    @OrderBy("titulo ASC")
     private Colecao colecao;
     
     public Recurso() {
@@ -95,14 +100,14 @@ public class Recurso implements Serializable{
     /**
      * @return the id
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
     
@@ -205,17 +210,17 @@ public class Recurso implements Serializable{
     }
     
     /**
-     * @return the autor
+     * @return the autores
      */
-    public List<Autor> getAutor() {
-        return autor;
+    public Set<Autor> getAutores() {
+        return autores;
     }
 
     /**
-     * @param autor the autor to set
+     * @param autores the autores to set
      */
-    public void setAutor(List<Autor> autor) {
-        this.autor = autor;
+    public void setAutores(Set<Autor> autores) {
+        this.autores = autores;
     }
     
     /**
@@ -234,7 +239,7 @@ public class Recurso implements Serializable{
 
     @Override
     public String toString() {
-        return "Recurso{" + "id=" + id + ", titulo=" + titulo + ", descricao=" + descricao + ", link=" + link + ", imagem=" + imagem + ", criacao=" + criacao + ", registro=" + registro + ", palavras=" + palavras + ", autor=" + autor + ", colecao=" + colecao + '}';
+        return "Recurso{" + "id=" + id + ", titulo=" + titulo + ", descricao=" + descricao + ", link=" + link + ", imagem=" + imagem + ", criacao=" + criacao + ", registro=" + registro + ", palavras=" + palavras + ", autores=" + autores + ", colecao=" + colecao + '}';
     }
     
     @Override

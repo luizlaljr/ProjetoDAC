@@ -1,21 +1,20 @@
 package br.uff.id.modelo;
 
 import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -34,7 +33,7 @@ public class Autor implements Serializable{
             sequenceName = "seq_autor_id", 
             allocationSize = 1)
     @GeneratedValue(generator = "seq_autor", strategy = GenerationType.SEQUENCE)
-    private long id;
+    private Long id;
     
     @Email(message = "O email deve ser valido")
     @Column(name = "email", nullable = false, unique = true)
@@ -62,9 +61,9 @@ public class Autor implements Serializable{
     @Column(name = "orcid", nullable = false, length = 19)
     private String orcid;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recurso", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_recurso_id"))
-    private Recurso recurso;
+    @ManyToMany(mappedBy = "autores")
+    @OrderBy("titulo ASC")
+    private Set<Recurso> recursos;
         
     public Autor() {
         
@@ -73,14 +72,14 @@ public class Autor implements Serializable{
     /**
      * @return the id
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
     
@@ -155,22 +154,22 @@ public class Autor implements Serializable{
     }
     
     /**
-     * @return the recurso
+     * @return the recursos
      */
-    public Recurso getRecurso() {
-        return recurso;
+    public Set<Recurso> getRecursos() {
+        return recursos;
     }
 
     /**
-     * @param recurso the recurso to set
+     * @param recursos the recurso to set
      */
-    public void setRecurso(Recurso recursos) {
-        this.recurso = recurso;
+    public void setRecurso(Set<Recurso> recursos) {
+        this.recursos = recursos;
     }    
 
     @Override
     public String toString() {
-        return "Autor{" + "id=" + id + ", email=" + email + ", nome=" + nome + ", sobrenome=" + sobrenome + ", afiliacao=" + afiliacao + ", orcid=" + orcid + ", recurso=" + recurso + '}';
+        return "Autor{" + "id=" + id + ", email=" + email + ", nome=" + nome + ", sobrenome=" + sobrenome + ", recursos=" + recursos + '}';
     }
     
     @Override
